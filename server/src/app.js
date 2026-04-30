@@ -63,11 +63,25 @@ function toClientError(error) {
 
 export function createChatHandler({ llmClient }) {
   return async (req, res) => {
+    const startedAt = Date.now();
+    const logChat = (status, code) => {
+      if (process.env.LOG_CHAT_REQUESTS === "false") {
+        return;
+      }
+
+      const durationMs = Date.now() - startedAt;
+      const persona = typeof req.body?.personaId === "string" ? req.body.personaId : "unknown";
+      console.log(
+        `[chat] status=${status} code=${code} persona=${persona} duration_ms=${durationMs}`
+      );
+    };
+
     const personaId = typeof req.body?.personaId === "string" ? req.body.personaId.trim() : "";
     const message = typeof req.body?.message === "string" ? req.body.message.trim() : "";
     const history = req.body?.history ?? [];
 
     if (!PERSONAS[personaId]) {
+      logChat(400, "INVALID_PERSONA");
       return res.status(400).json({
         error: "Invalid personaId. Expected one of: anshuman, abhimanyu, kshitij.",
         code: "INVALID_PERSONA",
@@ -75,6 +89,7 @@ export function createChatHandler({ llmClient }) {
     }
 
     if (!message) {
+      logChat(400, "MISSING_MESSAGE");
       return res.status(400).json({
         error: "Message is required.",
         code: "MISSING_MESSAGE",
@@ -83,6 +98,7 @@ export function createChatHandler({ llmClient }) {
 
     const normalizedHistory = normalizeHistory(history);
     if (normalizedHistory === null) {
+      logChat(400, "INVALID_HISTORY");
       return res.status(400).json({
         error: "History must be an array of { role, content } with role in [user, assistant].",
         code: "INVALID_HISTORY",
@@ -98,9 +114,11 @@ export function createChatHandler({ llmClient }) {
 
     try {
       const reply = await llmClient.generateReply(messages);
+      logChat(200, "OK");
       return res.status(200).json({ reply, personaId });
     } catch (error) {
       const mapped = toClientError(error);
+      logChat(mapped.status, mapped.payload?.code ?? "UNKNOWN_ERROR");
       if (mapped.status >= 500 && process.env.NODE_ENV !== "test") {
         console.error("/api/chat failed", {
           code: error.code,
