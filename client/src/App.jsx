@@ -5,12 +5,12 @@ import { PERSONAS, PERSONA_MAP } from "./personas";
 function TypingIndicator() {
   return (
     <div className="typing-indicator" aria-live="polite">
-      <span className="typing-avatar">AI</span>
       <div className="typing-bubble" aria-label="Assistant is typing">
         <span />
         <span />
         <span />
       </div>
+      <span className="typing-copy">AI is generating...</span>
     </div>
   );
 }
@@ -107,23 +107,19 @@ export default function App() {
   };
 
   return (
-    <div className="app-shell">
-      <div className="ambient ambient-left" />
-      <div className="ambient ambient-right" />
+    <div className="app-shell" data-persona={activePersonaId}>
+      <div className="stars-layer" />
+      <div className="rings-layer" />
+      <div className="grid-layer" />
+      <div className="vignette-layer" />
 
-      <main className="chat-layout">
-        <header className="top-panel">
-          <div>
-            <p className="eyebrow">Scaler Assignment 01</p>
-            <h1>Persona-Based AI Chatbot</h1>
-            <p className="active-persona" aria-label="Active persona">
-              Active Persona: <strong>{activePersona.name}</strong>
-            </p>
-          </div>
-        </header>
+      <main className="scene-layout">
+        <p className="sr-only" aria-label="Active persona">
+          Active Persona: <strong>{activePersona.name}</strong>
+        </p>
 
         <section className="persona-switcher" role="tablist" aria-label="Persona switcher">
-          {PERSONAS.map((persona) => (
+          {PERSONAS.map((persona, index) => (
             <button
               key={persona.id}
               role="tab"
@@ -132,24 +128,20 @@ export default function App() {
               className={activePersonaId === persona.id ? "persona-tab active" : "persona-tab"}
               onClick={() => resetConversationForPersona(persona.id)}
             >
-              <span>{persona.shortLabel}</span>
-              <small>{persona.subtitle}</small>
+              <span className="persona-index">0{index + 1}</span>
+              <span className="persona-name">{persona.shortLabel}</span>
             </button>
           ))}
         </section>
 
         <section className="chat-card" aria-live="polite">
-          {messages.length === 0 ? (
-            <div className="empty-state">
-              <h2>{activePersona.name}</h2>
-              <p>
-                Start with a quick question below or type your own. Switching persona will reset this chat
-                and load persona-specific suggestions.
-              </p>
-            </div>
-          ) : null}
-
           <div className="messages">
+            {messages.length === 0 ? (
+              <div className="empty-state">
+                <p>{activePersona.name} channel online.</p>
+              </div>
+            ) : null}
+
             {messages.map((message, index) => (
               <article
                 key={`${message.role}-${index}`}
