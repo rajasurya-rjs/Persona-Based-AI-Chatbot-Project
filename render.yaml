@@ -1,0 +1,19 @@
+services:
+  - type: web
+    name: persona-chatbot-api
+    env: node
+    rootDir: server
+    buildCommand: npm install
+    startCommand: npm run start
+    plan: free
+    envVars:
+      - key: GITHUB_TOKEN
+        sync: false
+      - key: LLM_BASE_URL
+        value: https://models.github.ai/inference
+      - key: LLM_MODEL
+        value: openai/gpt-4.1
+      - key: GITHUB_API_VERSION
+        value: 2022-11-28
+      - key: CORS_ORIGIN
+        sync: false

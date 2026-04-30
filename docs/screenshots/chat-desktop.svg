@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720" viewBox="0 0 1280 720">
+  <rect width="1280" height="720" fill="#f3ead8" />
+  <rect x="120" y="80" width="1040" height="560" rx="26" fill="#fffdf8" stroke="#d8c9ad" />
+  <text x="160" y="150" font-family="Arial" font-size="36" fill="#1f2a33">Persona-Based AI Chatbot</text>
+  <text x="160" y="200" font-family="Arial" font-size="22" fill="#5d6972">Desktop Screenshot Placeholder</text>
+  <text x="160" y="240" font-family="Arial" font-size="18" fill="#5d6972">Replace with actual app screenshot before final submission.</text>
+</svg>
