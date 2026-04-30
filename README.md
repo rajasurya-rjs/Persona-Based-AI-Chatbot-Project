@@ -8,7 +8,7 @@ A working persona chatbot where users can chat with three Scaler/InterviewBit pe
 The app uses persona-specific system prompts, GitHub Models API on the backend, and a responsive chat UI.
 
 ## Live Links
-- Frontend (Vercel): `ADD_YOUR_VERCEL_URL_HERE`
+- Frontend (Vercel): https://persona-based-ai-chatbot-project.vercel.app/
 - Backend (Render): `ADD_YOUR_RENDER_URL_HERE`
 
 ## Features
@@ -139,4 +139,4 @@ Replace these placeholders with real screenshots from your deployed app before f
 - [x] Persona switching resets conversation
 - [x] API error handling implemented
 - [x] Responsive UI + typing indicator + suggestion chips
-- [ ] Live URLs added after deployment
+- [x] Live URLs added after deployment
