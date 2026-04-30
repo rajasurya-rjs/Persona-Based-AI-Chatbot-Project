@@ -1,7 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="450" height="900" viewBox="0 0 450 900">
-  <rect width="450" height="900" fill="#f3ead8" />
-  <rect x="24" y="40" width="402" height="820" rx="28" fill="#fffdf8" stroke="#d8c9ad" />
-  <text x="50" y="120" font-family="Arial" font-size="26" fill="#1f2a33">Mobile View</text>
-  <text x="50" y="170" font-family="Arial" font-size="18" fill="#5d6972">Screenshot Placeholder</text>
-  <text x="50" y="210" font-family="Arial" font-size="16" fill="#5d6972">Replace before submission.</text>
-</svg>
