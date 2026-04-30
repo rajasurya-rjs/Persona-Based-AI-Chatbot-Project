@@ -13,6 +13,7 @@ function mockSuccessReply(text = "This is a persona reply. What should we tackle
 describe("App", () => {
   beforeEach(() => {
     vi.restoreAllMocks();
+    window.localStorage.clear();
   });
 
   it("shows active persona and updates it on switch", async () => {
@@ -27,22 +28,42 @@ describe("App", () => {
     expect(screen.getByLabelText(/active persona/i)).toHaveTextContent("Abhimanyu Saxena");
   });
 
-  it("clears conversation when persona is switched", async () => {
+  it("preserves separate conversation threads for each persona", async () => {
     const user = userEvent.setup();
-    global.fetch = vi.fn().mockResolvedValue(mockSuccessReply());
+    global.fetch = vi
+      .fn()
+      .mockResolvedValueOnce(mockSuccessReply("Anshuman reply. What next?"))
+      .mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({ reply: "Kshitij reply. What should we solve now?", personaId: "kshitij" }),
+      });
 
     render(<App />);
 
-    await user.type(screen.getByPlaceholderText(/ask anshuman/i), "How do I prepare?");
+    await user.type(screen.getByPlaceholderText(/ask anshuman/i), "How do I prepare for interviews?");
     await user.click(screen.getByRole("button", { name: "Send" }));
 
     await waitFor(() => {
-      expect(screen.getByText(/persona reply/i)).toBeInTheDocument();
+      expect(screen.getByText(/anshuman reply/i)).toBeInTheDocument();
     });
 
     await user.click(screen.getByRole("tab", { name: /kshitij/i }));
-    expect(screen.queryByText("How do I prepare?")).not.toBeInTheDocument();
-    expect(screen.queryByText(/persona reply/i)).not.toBeInTheDocument();
+    expect(screen.queryByText(/how do i prepare for interviews/i)).not.toBeInTheDocument();
+
+    await user.type(screen.getByPlaceholderText(/ask kshitij/i), "Help me learn recursion");
+    await user.click(screen.getByRole("button", { name: "Send" }));
+
+    await waitFor(() => {
+      expect(screen.getByText(/kshitij reply/i)).toBeInTheDocument();
+    });
+
+    await user.click(screen.getByRole("tab", { name: /anshuman/i }));
+    expect(screen.getByText(/how do i prepare for interviews/i)).toBeInTheDocument();
+    expect(screen.getByText(/anshuman reply/i)).toBeInTheDocument();
+
+    await user.click(screen.getByRole("tab", { name: /kshitij/i }));
+    expect(screen.getByText(/help me learn recursion/i)).toBeInTheDocument();
+    expect(screen.getByText(/kshitij reply/i)).toBeInTheDocument();
   });
 
   it("shows typing indicator while waiting for response", async () => {
